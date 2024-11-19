@@ -33,3 +33,23 @@ variable "subnets_public_azs" {
   default = ["us-east-1a", "us-east-1b"]
   type    = list(string)
 }
+
+variable "db_engine" {
+  default = "postgres"
+  type    = string
+}
+
+variable "db_version" {
+  type    = number
+  default = 16
+}
+
+variable "db_username" {
+  type    = string
+  default = "postgres"
+}
+
+variable "rds_key_name" {
+  type    = string
+  default = "rds_postgres_key"
+}

@@ -23,19 +23,19 @@ module "eks" {
 
   eks_managed_node_group_defaults = {
     ami_type       = "AL2_x86_64"
-    instance_types = ["t3.medium", "t3.large"]
+    instance_types = ["t2.medium", "t2.large"]
   }
   eks_managed_node_groups = {
     node-grp-one = {
-      name           = "node-group-1"
-      instance_types = ["t3.small"]
+      name           = "worker-group-1"
+      instance_types = ["t2.large"]
       min_size       = 1
-      max_size       = 4
+      max_size       = 3
       desired_size   = 2
     }
     node-grp-two = {
-      name           = "node-group-2"
-      instance_types = ["t3.small"]
+      name           = "worker-group-2"
+      instance_types = ["t2.large"]
       min_size       = 1
       max_size       = 3
       desired_size   = 2
@@ -43,6 +43,6 @@ module "eks" {
 
   }
   tags = {
-    "Name" = "Dev EKS Cluster"
+    "Name" = "DEV-CLUSTER"
   }
 }

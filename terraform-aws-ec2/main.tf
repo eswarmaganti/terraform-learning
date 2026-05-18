@@ -29,7 +29,6 @@ resource "aws_security_group" "ec2_sg" {
 
 }
 
-
 # fething the available availability-zones under current region
 data "aws_availability_zones" "azs" {
   state = "available"
@@ -53,11 +52,30 @@ data "aws_ami" "ami" {
   }
 }
 
-resource "aws_instance" "ec2_servers" {
-  for_each               = { for az in data.aws_availability_zones.azs.names : az => az }
+# creating one ec2 instance per az
+resource "aws_instance" "ec2_servers_count" {
+  count = length(data.aws_availability_zones.azs.names)
+  #for_each               = { for az in data.aws_availability_zones.azs.names : az => az }
+  availability_zone      = data.aws_availability_zones.azs.names[count.index]
+  instance_type          = "t2.micro"
+  ami                    = data.aws_ami.ami.id
+  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
+  key_name               = "jenkins_ec2"
+  tags = {
+    "Name" = "EC2-${data.aws_availability_zones.azs.names[count.index]}"
+  }
+}
+
+
+# creating ec2 instances using for_each in each AZ
+resource "aws_instance" "ec2_servers_foreach" {
+  for_each               = toset(data.aws_availability_zones.azs.names)
   availability_zone      = each.key
   instance_type          = "t2.micro"
   ami                    = data.aws_ami.ami.id
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
   key_name               = "jenkins_ec2"
+  tags = {
+    "Name" = "EC2-${each.key}"
+  }
 }
